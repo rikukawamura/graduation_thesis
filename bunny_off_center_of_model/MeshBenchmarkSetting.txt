@@ -1,0 +1,63 @@
+;------------------------------------------------------------------------------------------------------
+;MeshBenchmark Configuration file
+
+;Please put ONLY ONE space between different values in attack parameter list
+;Please DO NOT make extra empty lines or delete any existing line within the commands for each attack
+;------------------------------------------------------------------------------------------------------
+
+[GEODISTANCES]
+;Do you want to calculate objective geometric distances after attacks? (true or false)
+false
+
+[MSDM]
+;Do you want to calculate MSDM distances after geometry attacks? (true or false)
+false
+;Set the radius value for MSDM calculation (0.005 for high sensitivity and 0.01 for low sensitivity).
+;According to the evaluation protocols, we should use 0.005.
+0.005
+
+[ElementsReordering]
+;Number of obtained attacked meshes
+3
+
+[Noise]
+;Intensity list
+0.0005 0.001 0.003 0.005
+;Preserve boundary (true or false)
+true
+;Number of obtained attacked meshes for each intensity
+3
+
+[SimilarityTransformation]
+;Number of obtained attacked meshes (successively undergoing translation, rotation and uniform scaling)
+3
+
+[Smoothing]
+;Deformation factor (a floating number, recommended value is 0.10)
+0.10
+;Iteration number list
+5 10 30 50
+;Preserve boundary (true or false)
+true
+
+[Quantization]
+;Bit depth list
+11 10 9 8 7
+
+[Subdivision]
+;Subdivision schemes list (possible schemes are: CATMULLCLARK LOOP DOOSABIN SQRT3 MIDPOINT)
+LOOP SQRT3 MIDPOINT
+;Subdivision iterations list
+1
+
+[Simplification]
+;Simplification policies (possible policies are: EDGELENGTHMIDPOINT LINDSTROMTURK)
+;EDGELENGTHMIDPOINT is fast but with low precision; LINDSTROMTURK is somewhat slow but with high precision
+LINDSTROMTURK
+;Simplification ratio list (percentage of the removed edges)
+;please put these ratios in ascending order so as to accelerate the simplification process
+10.0 30.0 50.0 70.0 90.0 95.0 97.5
+
+[Cropping]
+;List of percentages of the cropped parts. Each percentage produces 3 pseudo-randomly cropped objects
+10.0 30.0 50.0

@@ -1,0 +1,96 @@
+----------------------------------------------
+MeshBenchmark log file
+----------------------------------------------
+
+
+Element reordering attack: number 1
+
+Element reordering attack: number 2
+
+Element reordering attack: number 3
+
+Noise addition attack: intensity 0.0005; keepboundary; number 1
+
+Noise addition attack: intensity 0.0005; keepboundary; number 2
+
+Noise addition attack: intensity 0.0005; keepboundary; number 3
+
+Noise addition attack: intensity 0.0010; keepboundary; number 1
+
+Noise addition attack: intensity 0.0010; keepboundary; number 2
+
+Noise addition attack: intensity 0.0010; keepboundary; number 3
+
+Noise addition attack: intensity 0.0030; keepboundary; number 1
+
+Noise addition attack: intensity 0.0030; keepboundary; number 2
+
+Noise addition attack: intensity 0.0030; keepboundary; number 3
+
+Noise addition attack: intensity 0.0050; keepboundary; number 1
+
+Noise addition attack: intensity 0.0050; keepboundary; number 2
+
+Noise addition attack: intensity 0.0050; keepboundary; number 3
+
+Similarity transformation attack: number 1
+
+Similarity transformation attack: number 2
+
+Similarity transformation attack: number 3
+
+Laplacian smoothing attack: lambda 0.100; iteration 5; keepboundary
+
+Laplacian smoothing attack: lambda 0.100; iteration 10; keepboundary
+
+Laplacian smoothing attack: lambda 0.100; iteration 30; keepboundary
+
+Laplacian smoothing attack: lambda 0.100; iteration 50; keepboundary
+
+Vertex quantization attack: bitdepth 11
+
+Vertex quantization attack: bitdepth 10
+
+Vertex quantization attack: bitdepth 9
+
+Vertex quantization attack: bitdepth 8
+
+Vertex quantization attack: bitdepth 7
+
+Subdivision attack: scheme loop; iteration 1
+
+Subdivision attack: scheme sqrt3; iteration 1
+
+Subdivision attack: scheme midpoint; iteration 1
+
+Simplification attack: policy lindstromturk; ratio 10.0
+
+Simplification attack: policy lindstromturk; ratio 30.0
+
+Simplification attack: policy lindstromturk; ratio 50.0
+
+Simplification attack: policy lindstromturk; ratio 70.0
+
+Simplification attack: policy lindstromturk; ratio 90.0
+
+Simplification attack: policy lindstromturk; ratio 95.0
+
+Simplification attack: policy lindstromturk; ratio 97.5
+
+Cropping attack: ratio 10.0; number 1
+
+Cropping attack: ratio 10.0; number 2
+
+Cropping attack: ratio 10.0; number 3
+
+Cropping attack: ratio 30.0; number 1
+
+Cropping attack: ratio 30.0; number 2
+
+Cropping attack: ratio 30.0; number 3
+
+Cropping attack: ratio 50.0; number 1
+
+Cropping attack: ratio 50.0; number 2
+
+Cropping attack: ratio 50.0; number 3

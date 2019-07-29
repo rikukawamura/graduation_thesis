@@ -1,0 +1,1161 @@
+%
+% 目次や図・表番号は2度LaTeXを実行（コンパイル）しないと反映されないので気を付けて下さい
+%
+\documentclass[11pt]{jreport}
+\usepackage{ailab_thesis}
+\usepackage{indentfirst}
+\usepackage{amsmath,amssymb}
+\usepackage[dvipdfmx]{graphicx,color}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\lhead{\leftmark}
+\rhead{}
+\cfoot{\thepage}
+\setlength{\headheight}{16pt}
+\renewcommand{\chaptermark}[1]{\markboth{\ \normalfont\thechapter\ ~#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection #1}{}}
+
+%\lhead{\rightmark}
+%\cfoot{\thepage}
+%\renewcommand{\chaptermark}[1]{\markboth{第\ \normalfont\thechapter\ 章~#1}{}}
+%\renewcommand{\sectionmark}[1]{\markright{第\ \normalfont\thechapter\ 章　\thesection #1}{}}
+%\renewcommand{\chaptermark}[1]{\markboth{第\ \normalfont\thechapter\ 章~#1}{}}
+%\renewcommand{\sectionmark}[1]{\markright{\thesection #1}{}}
+
+%\usepackage[dvipdfmx]{hyperref}
+%\usepackage{url}	% \url{}コマンド用．URLを表示する際に便利
+%\usepackage{graphicx}  % ←graphicx.styを用いてEPSを取り込む場合有効にする
+% 他のパッケージ・スタイルを使う場合には適宜追加
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%% 主に表紙を作成するための情報
+%%
+
+%%  タイトル(修論の場合は英語表記も指定)
+\title{加重平均を用いた\\三次元画像電子透かし法に関する研究}
+\etitle{Novel Algorithm with Complex Transform}
+
+%%  著者名(修論の場合は英語表記も指定)
+\author{川村陸}
+\eauthor{Riku Kawamura}
+
+%% 卒業論文・修士論文(以下のどちらかを選択，具体的には4年生は\masterの直前のみに%，M2は\masterの直前のみに%を付与)
+\bachelar	% 卒業論文(4年生用)
+%\master  	% 修士論文(M2用)
+
+%%  学科・専攻(以下のどちらかを選択，具体的には4年生は下（電子情報工学）の行頭に%，M2は上（情報工）の行頭に%を付与)
+\department{情報工}
+%\department{電子情報工学}
+
+%%  学生番号(以下の%は外さず，無視）
+%\studentid{60175000}
+
+%%  卒業年度
+\gyear{2018}		% 提出年が2018年なら，2017年度
+
+%%  論文提出日
+\date{2019年2月12日}	% 修士の場合は大学事務への提出日（1月末頃）として英語表記も指定し，学部の場合は審査員への提出日（2月上旬）だけ記載
+%\edate{January 29, 2018}	% 学部の場合，こちら(英語表記)の行頭に%を付与し無効化
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\maketitle
+
+%%  目次
+\tableofcontents
+\thispagestyle{plain} 
+\pagenumbering{arabic}	% 以降のページ番号を算用数字に
+%%  図目次 (図目次をいれたければ以下のコメントをはずす)
+%\listoffigures
+
+%%  表目次 (表目次をいれたければ以下のコメントをはずす)
+%\listoftables
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%%  本文はここから
+%%
+
+\chapter{まえがき}
+
+{\mc マルチメディア処理技術やネットワーク技術の進歩に従い，映画や音楽などのコンテンツをデジタル化して流通することが重要な産業となってきた．デジタル化されたコンテンツは，従来のアナログ形式のコンテンツに比べて，加工，複製，流通が容易であるため，だれでもいつでもどこでもコンテンツを自由に楽しめる便利な社会が期待されている．ところが，デジタル化の負の側面として，コンテンツの不正なコピーや配布が容易であるため，コンテンツを制作，編集した者の著作権が侵害され，その利益が奪われるため，権利者が優良なコンテンツを提供しなくなり，ビジネスが活性化しないなどの問題が発生する．
+そこで，コンテンツの不正コピーを防止し，著作権を保護する技術が重要になってきた．従来の著作権保護技術は，暗号および認証を用いたものが主である．暗号は，正当な対価を払ったものにのみ鍵を配布し，コンテンツの鑑賞を可能にするという効果がある．認証は，コンテンツの送付先を確認することで，正当な対価を払った者にのみコンテンツを送付するという効果がある．しかし，これらの技術は，正当な対価を払った購入者がコンテンツを受け取り，暗号を解除した後，これを不正コピーすることは防止できない．\par
+電子透かし\cite{maegaki1}は，人間には知覚できない微小な変更をコンテンツに加えることで，情報をコンテンツに埋め込む技術である．例えばコンテンツが画像の場合，画像の明るさや色に微小な変更を加えることで情報を埋め込む．また，この変更を読み取ることで情報を検出する．電子透かしを利用すれば，コピーの可否や回数制限などの情報をコンテンツに埋め込むことで，不正コピーを防止することができる．また，配布先名称を埋め込むことで不正コピーされたコンテンツから不正者を特定可能とし，間接的に不正コピーを抑止することもできる．このように電子透かしは，暗号や認証が対処できなかった購入後の不正に対処可能な技術である．\par
+一般的に，電子透かしにより埋め込まれた情報の特徴として以下のようなものがある\cite{maegaki2}．
+\begin{itemize}
+\item コンテンツそのものに情報が埋め込まれているため，データのフォーマットの変換後もその情報は失われない
+\item コンテンツが加工されても情報は残る
+\item コンテンツに加えられた加工を検知できる
+\item 情報を管理するために外部にデータベースなどを構築する必要がない
+\item 既存のデータフォーマットをそのまま利用できるため，従来のアプリケーションに変更を加えることなくコンテンツの利用が可能である
+\item 埋め込まれたデータを，特定の利用者のみが利用できるように設定することができる
+\end{itemize}
+これらの条件を意識した画像，音声，動画などのディジタルコンテンツへの電子透かしはこれまでに数多く研究が行われている，なので本論文では近年，３Dプリンターの発達により普及してきている三次元画像に対する電子透かしについて論じることにする．二次元画像と比較すると，三次元画像に対する電子透かしの研究報告は非常に少なく，まだまだ伸びしろがある分野であるといえる．本論文では，従来法であるChoの透かし埋め込み法\cite{Cho}並びに，それの改善版であるLiの透かし埋め込み法\cite{Li}の両方のメリットだけを維持し，可能な限りデメリットを排除するために，加重平均を用いることによって，透かし埋め込み後の三次元画像の歪み低減，頑健性の向上を目的としている．\par
+本論文では，第２章で，従来法であるChoの透かし埋め込み法，およびLiの透かし埋め込み法の基本原理について述べた後に，なぜ本論文では加重平均を用いるに至ったかを説明する．第３章では，加重平均を用いた透かし埋め込み法，並びに抽出法の手順を数式を用いて詳細に述べていく．第４章では，Liの手法と提案法との歪み，頑健性の比較結果を示す．最後に第５章では，本論文で得られた成果，今後の課題について述べる．
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{従来法の透かし埋め込み法}
+\section{Choの透かし埋め込み法}
+ここでは，Choの透かし埋め込み法\cite{Cho}について説明する．図\ref{fig:sample}にChoの透かし埋め込み法の手順のフローチャートを示す．
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[scale=1.0]{figure/図面1.eps}% 図を貼り込む
+    % 試しに，tiger.psが自分のマシンのどこに格納されているかを調べて
+    % 以下の命令を有効にしてみて下さい．
+    % ただし，同時に\begin{document}より前にある\usepackage{graphicx}
+    % も有効にする必要があります．
+    % 以下の例ではついでに四角で囲っています．
+    %\framebox{\includegraphics[width=5cm,clip]{/usr/local/share/ghostscript/7.07/examples/tiger.ps}}
+  \end{center}
+  \caption{Choの透かし埋め込み手順のフローチャート}
+  \label{fig:sample}
+\end{figure}
+\newpage
+
+
+
+
+
+Choの各ビン内への距離値の格納方法は，以下の数式で表せられる．
+\begin{equation}
+B_n=\{{\rho_{n,j}}|\rho_{min}+\frac{\rho_{max}-\rho_{min}}{N}・(n-1)\le \rho_i<\rho_{min}+\frac{\rho_{max}-\rho_{min}}{N}・n\}
+\end{equation}
+\begin{math}
+B_n
+ \end{math}
+は，\begin{math}n\end{math}番目のビンを表し，
+\begin{math}
+\rho_i
+ \end{math}
+は，昇順に並べられた距離値の\begin{math}i\end{math}番目の距離値を表し，
+\begin{math}
+\rho_{n,j}
+ \end{math}
+は，\begin{math}n\end{math}番目のビン内の\begin{math}j\end{math}番目の距離値を表し，
+\begin{math}
+\rho_{max},\rho_{min}
+ \end{math}
+は，それぞれ全ての距離値における最大値，最小値を表す．\par
+以下に条件式を示す．
+\begin{center}
+\begin{math}
+1\le n \le N, 1\le i \le L_v,1\le j \le V_n
+ \end{math}\par
+\end{center}
+\begin{math}N\end{math}は透かしデータの長さを表し，
+\begin{math}
+L_v
+ \end{math}
+は，モデルの全頂点数を表し，
+\begin{math}
+V_n
+ \end{math}
+は，\begin{math}n\end{math}番目のビンに属する頂点数を表す．
+
+式(2.1)の意味を簡単に説明すると，各ビンの距離値の最大値-最小値が均等になるように\begin{math}N \end{math}分割し，その幅に属する距離値をビン内に格納するということである．
+この格納法を用いた時の図\ref{fig:usagi}に対する各ビンの距離値のヒストグラム(\begin{math}N\end{math}=64)を図\ref{fig:cho}に示す．
+
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=0.7]{figure/bunny.eps}
+  \end{center}
+  \caption{Stanford Bunny}
+  \label{fig:usagi}
+\end{figure}
+
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=0.8]{figure/his.eps}
+  \end{center}
+  \caption{Choの格納法を用いたときの距離値のヒストグラム}
+  \label{fig:cho}
+\end{figure}
+この格納法を用いた時に，図\ref{fig:cho}のようなヒストグラムになるのは一般的な三次元画像の距離値のヒストグラムは正規分布に従うためである．
+図\ref{fig:cho}を見てみると，距離値の値が0.3あたりのビン並びに，0.8～1.0あたりのビンの頂点数が非常に少ないことがわかる．それとは対称に，距離値の値が0.4～0.6あたりのビンの頂点数は非常に多いことがわかる．基本的に，各ビン内の頂点数が多いほうが歪みの低減，頑健性の向上に関わることが実験から明らかになっているため，透かしを埋め込んだ時に頂点数が多いビンの頑健性は非常に高く，ビン内に属している頂点の頂点移動量は小さくなる．しかし，頂点数が少ないビンは頑健性が非常に弱く，ビン内に属している頂点の頂点移動量は大きくなってしまう．つまり，ビンごとに歪み，頑健性にばらつきが出てしまう．また，\begin{math}N\end{math}の値が大きくなりすぎると，頂点数が0になるビンがでる可能性があるため，透かしを埋め込めなくなる可能性がある．
+この問題点を改善したものがLiの格納法である．
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Liの透かし埋め込み法}
+Cho，Liの透かし埋め込み手順において異なるのは，各ビンに距離値を格納する部分(図\ref{fig:sample}における赤文字部分)である．
+ここでは，Liの透かし埋め込み法\cite{Li}について説明する．Liの各ビン内への距離値の格納方法は，以下の数式で表せられる．
+
+\begin{equation}
+B_n=\{{\rho_{n,j}}|{\rho_{n,j}=\rho_{i}},i=\lfloor 0.05L_v \rfloor +M・(n-1)+j \}
+\end{equation}
+
+\begin{math}
+ M=\frac{\tilde{L}_v}{N}と定義し，以下に条件式を示す．
+ \end{math}\par
+\begin{center}
+\begin{math}
+\lfloor 0.05L_v \rfloor+M・(n-1) < i \le \lfloor 0.05L_v \rfloor+M・n
+ \end{math}\par
+\begin{math}
+1\le n \le N,1\le i \le M・N,1 \le j \le M
+\end{math}
+\end{center}
+\begin{math}
+\tilde{L}_v
+\end{math}
+は，昇順に並べられた距離値のヒストグラムの両端5\%を切り取った後の頂点数を示す．\par
+
+
+式(2.2)の意味を簡単に説明すると，各ビンの距離値の最大値-最小値は不均等にはなるが，各ビンに属する頂点数を等しくするということである．
+この格納法を用いると，全てのビンに等しく頂点を格納することで，全てのビンの頑健性が一定となり，また歪みの露呈も一定に抑えることができる．またこの格納法を用いると，\begin{math}N\end{math}がどれだけ大きくなってもビン内に透かしが埋め込めないといったことを防ぐことができる．しかし，この格納法では一般的な三次元画像の距離値のヒストグラムは正規分布に従うため，ヒストグラムの両端5\%を切り取っている．つまり，全頂点の10\%を切り取っている．使用する頂点数を減少させるということは，各ビンに属する頂点数が減少し，歪みの増加，頑健性の低下につながってしまう．つまり，一番望ましい格納法はヒストグラムの両端5\%を切り取らないでLiの格納法を用いることである．2.3では，算術平均を用いて上記で述べた望ましい格納法を用いた時に生じる問題を述べる．
+
+
+
+\section{算術平均を用いたときの透かし埋め込み法}
+ここでは，全頂点を利用してLiの格納法を用いた時に，加重平均を用いずに算術平均を用いた時に生じる問題点について述べる．算術平均とは，我々が日常的に平均と呼んでいるものである．本論文では，加重平均と区別するために一般的な平均のことを算術平均と呼ぶことにする．一般的に加重平均を用いた時と算術平均を用いたときの格納法は同じである．以下に格納法を示す．
+\begin{equation}
+B_n=\{{\rho_{n,j}}|\rho_{n,j}=\rho_i,i=M・(n-1)+j\}
+\end{equation}
+
+\begin{math}
+ M=\frac{L_v}{N}と定義し以下に条件式を示す．
+ \end{math}\par
+\begin{center}
+\begin{math}
+1\le n \le N,M・(n-1) < i \le M・n,1\le j \le M
+ \end{math}\par
+\end{center}
+
+この格納法を用いた時に算術平均を用いた時の，図\ref{fig:usagi}に対する各ビンの正規化された距離値の算術平均値は，表\ref{tab:sanzyutu}となる．
+
+
+\begin{table}[h]
+\begin{center}
+\caption{算術平均を使用した時の各ビンの平均値}
+  \begin{tabular}{|l|l|l|l|l|l|l|l|} \hline
+    ビンの番号 & 1 & 2 & 3 & ・・・ & 62 & 63 & 64 \\ \hline \hline
+    ビンの算術平均値 & 0.7295 & 0.5074 & 0.4888 & ・・・ & 0.4890 & 0.4447 &0.4396 \\ \hline
+  \end{tabular}
+\label{tab:sanzyutu}
+\end{center}
+\end{table}
+
+
+この時，1番目，64番目のビンの平均値が大きく0.5から離れていることが分かる．例えば1番目のビンに0を埋め込むとすると，透かし埋め込み条件式(3.15)(\begin{math}\alpha\end{math}=0.1)より，
+\begin{math}
+|0.7295-0.40|=0.3295
+\end{math}だけ平均値を動かさないといけない．64番目のビンも同様で，1を埋め込むとすると，
+\begin{math}
+|0.4396-0.60|=0.1604
+\end{math}だけ平均値を動かさないといけない．これらから埋め込むデータによっては，頂点の移動が大きくなり歪みが大きく出てしまうことが分かる．この問題点を改善するために，頑健性を高く保ちつつ，安定した歪みを実現するために加重平均を用いる．
+
+
+
+
+
+
+\section{加重平均を用いたときの透かし埋めこみ法}
+
+
+
+
+\subsection{透かしデータの埋め込み法}
+ここでは，2.3で説明した問題点を解決するために加重平均を用いた透かし埋めこみ法について述べる．2.3との違いは，算術平均の代わりに加重平均を用いている点（図\ref{fig:sample}における青文字部分)である．加重平均とは，より重要な値に重みを加えて平均値を計算する方法であるが，本論文では，各ビンの平均値を0.5周辺に集めることによって0，1どちらを埋め込む場合でも大きな歪みが出ないようにするために加重平均を用いている．図\ref{fig:usagi}に対する各ビンの正規化された距離値の加重平均値は，表\ref{tab:kazyu}となる．表\ref{tab:kazyu}をみると，１番目のビンに０を埋め込むとすると，\begin{math}
+|0.5061-0.40|=0.1061
+\end{math}だけの平均値移動で済む．同様に64番目のビンも同様で，1を埋め込むとすると，
+\begin{math}
+|0.5021-0.55|=0.0979
+\end{math}の平均値移動で済む．つまり，算術平均を用いる場合よりも加重平均を用いた場合の方が，埋め込む透かしによらず安定した歪みで済むということである．
+
+
+\begin{table}[h]
+\begin{center}
+\caption{加重平均を使用した時の各ビンの平均値}
+  \begin{tabular}{|l|l|l|l|l|l|l|l|} \hline
+  ビンの番号 & 1 & 2 & 3 & ・・・ & 62 & 63 & 64 \\ \hline \hline
+  ビンの加重平均値 &  0.5061 & 0.5081 & 0.4877 & ・・・ & 0.4882 & 0.4402 &0.5021 \\ \hline
+  \end{tabular}
+\label{tab:kazyu}
+\end{center}
+\end{table}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\subsection{透かしデータの抽出法}
+透かしデータを抽出する手順は，透かしを埋め込む手順とほぼ同じである．図\ref{fig:ext}に加重平均を用いた時
+の透かし抽出手順のフローチャートを示す．
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[scale=1.0]{figure/tyusyutu.eps}% 図を貼り込む
+    % 試しに，tiger.psが自分のマシンのどこに格納されているかを調べて
+    % 以下の命令を有効にしてみて下さい．
+    % ただし，同時に\begin{document}より前にある\usepackage{graphicx}
+    % も有効にする必要があります．
+    % 以下の例ではついでに四角で囲っています．
+    %\framebox{\includegraphics[width=5cm,clip]{/usr/local/share/ghostscript/7.07/examples/tiger.ps}}
+  \end{center}
+  \caption{加重平均を用いた時の透かし抽出手順のフローチャート}
+  \label{fig:ext}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\chapter{加重平均を用いた透かし埋め込み法と透かし抽出法}\label{chap:fig-tab-exp}
+
+\section{透かしデータ生成}
+埋め込む透かし情報の種類には，著作者名，利用許諾者名など様々であるが，それらの情報を0，1のバイナリービットの並びで表現し透かしデータを埋め込む．本論文では，簡単化のためそれらの並びをランダム生成することにする．ランダム生成された透かしデータは以下のように表せられる．
+\begin{equation}
+  W^o = (w^o_1,w^o_2,w^o_3...,.,w^0_{N-2},w^o_{N-1},w^0_N) \label{exp:sample}
+\end{equation}
+
+\begin{math}
+ W^o
+ \end{math}
+は，生成された透かしデータを表し，
+\begin{math}
+ w^o_i \in \{0,1\}
+ \end{math}
+である．ここで，
+\begin{math}
+ 1\le i \le N
+ \end{math}
+とする．\begin{math}N \end{math}は生成された透かしの長さである．
+
+\section{透かし埋め込み法}
+\subsection{モデル中心と各頂点の距離を計算}
+デカルト座標
+\begin{math}
+(x_i,y_i,z_i)
+ \end{math}を球面座標
+\begin{math}
+(\rho_i,\theta_i,\psi_i)
+ \end{math}
+に変換する公式を以下に示す．
+\begin{equation}
+ \rho_i=\sqrt{(x_i-x_g)^2+(y_i-y_g)^2+(z_i-z_g)^2}
+ \end{equation}
+\begin{equation}
+\theta_i=\tan^{-1}\frac{(y_i-y_g)}{(x_i-x_g)}
+\end{equation}
+\begin{equation}
+\psi_i=\cos^{-1}\frac{(z_i-z_g)}{\sqrt{(x_i-x_g)^2+(y_i-y_g)^2+(z_i-z_g)^2}}
+\end{equation}
+
+モデル中心の公式を以下に示す．
+\begin{equation}
+x_g=\frac{1}{L_v}\sum_{i=1}^{L_v} x_i,\ y_g=\frac{1}{L_v}\sum_{i=1}^{L_v} y_i,\ z_g=\frac{1}{L_v}\sum_{i=1}^{L_v} z_i,
+\end{equation}
+ここで，\begin{math}
+1 \le i \le L_v
+\end{math}
+とする．
+\begin{math}
+L_v
+\end{math}
+は,頂点の数を表す．
+\begin{math}
+\rho_i
+ \end{math}
+(距離値)は\begin{math}i\end{math}番目の頂点とモデル中心との距離を表す．
+\begin{math}
+\theta，\psi
+ \end{math}
+は，3.2.7において，透かし埋め込み後の頂点を計算するのに利用する．
+
+\newpage
+
+\subsection{計算した距離値を昇順に配列}
+距離値を昇順に並べる理由として,２点挙げられる．
+\begin{itemize}
+  \item 頂点ランダム化攻撃などの攻撃がされた時，透かしデータは変わらない\par
+モデル中心と各頂点との距離値をとっているので，こういった攻撃に対しては，100\%耐久出来るので，実験結果では省略する．
+  \item 各ビン内の最大値-最小値が小さくなる\par
+各ビン内の最大値-最小値が小さくなることで，各ビンの正規化した距離値を透かしを埋め込むために変更するための頂点移動距離が小さくなるため，歪みが小さくなる．
+\end{itemize}
+ここで，昇順に並べられた距離値を新たに
+\begin{math}
+\rho_j
+ \end{math}と定義する．
+\subsection{各ビン内に距離値を格納}
+透かし情報を埋め込むために，昇順に並べられた距離値を一つずつビン内に格納していく.以下に昇順に並べられた距離値を各ビン内に格納する公式を示す．これは,式(2.3)と同じ意味である．
+\begin{equation}
+B_n=\{{\rho_{n,m}}|\rho_{n,m}=\rho_j,j=M・(n-1)+m\}
+\end{equation}
+
+\begin{math}
+ M=\frac{L_v}{N}と定義し以下に条件式を示す．
+ \end{math}\par
+\begin{center}
+\begin{math}
+1\le n \le N,M・(n-1) < j \le M・n,1\le m \le M
+ \end{math}\par
+\end{center}
+
+\begin{math}
+\rho_{n,m}
+\end{math}
+は，\begin{math}n\end{math}番目のビンの\begin{math}m\end{math}番目の距離値を表す．
+\subsection{各ビンにおいて距離値を正規化}
+各ビン内の距離値を正規化する公式を以下に示す．
+\begin{equation}
+\tilde{\rho}_{n,m}=\frac{\rho_{n,m}-\rho^{min}_n}{\rho^{max}_n-\rho^{min}_n}
+\end{equation}
+
+\begin{math}
+\tilde{\rho}_{n,m}
+\end{math}
+は，\begin{math}n\end{math}番目のビンの\begin{math}m\end{math}番目の正規化された距離値を表す．
+\begin{math}
+\rho^{min}_n
+\end{math}
+，
+\begin{math}
+\rho^{max}_n
+\end{math}
+は，\begin{math}n\end{math}番目のビンの最小値，最大値の距離値を表す．
+
+
+
+
+
+
+
+\subsection{各ビンにおいて正規化された距離値の加重平均を計算}
+一般的な平均と言われる算術平均は，以下のように一般化できる．
+\begin{equation}
+\bar{\rho}_{n}=\frac{1}{V_n} \sum_{i=1}^{V_n} \tilde{\rho}_i^n
+\end{equation}
+\begin{math}
+\tilde{\rho}_i^n
+\end{math}
+は，\begin{math}n\end{math}番目のビンの\begin{math}i\end{math}番目の正規化された距離値を表す．\par
+
+
+これに対して，加重平均の公式は以下のように一般化できる．
+
+
+
+\begin{equation}
+\bar{\rho}_{n}=\frac{\sum_{i=1}^{V_n} w_i^n \tilde{\rho}_i^n}{\sum_{i=1}^{V_n} w_i^n}
+\end{equation}
+
+
+\begin{math}
+w_i^n
+\end{math}
+は，\begin{math}n\end{math}番目のビンの\begin{math}i\end{math}番目の距離値の重みを表す．
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{マッピング関数を用いて各ビンの加重平均を変更}
+ここでは，マッピング関数を用いて各ビンの正規化された距離値を少しずつ変更していき，各ビンの加重平均値を少しずつ変更する．そして，透かし埋め込み条件式(3.15)に当てはまった時に透かしを埋め込む．
+マッピング関数は以下のような公式で示される．
+
+\begin{equation}
+\tilde{\rho}_{n,m}'=(\tilde{\rho}_{n,m})^{k_{n,m}^{(t)}}
+\end{equation}
+
+
+\begin{math}
+w_i^o=0
+\end{math}
+の時は，以下のマッピング関数を用いる．
+\begin{equation}
+k_{n,m}^{(t)}=1+(t-1)・\Delta k
+\end{equation}
+
+
+\begin{eqnarray}
+\Delta k=\left\{ \begin{array}{ll}
+0.002 & (\tilde{\rho}_{n,m} \in [0,0.3]) \\
+0.001 & (\tilde{\rho}_{n,m} \in [0.3,0.9]) \\
+0.0015 & (\tilde{\rho}_{n,m} \in [0.9,1]) \\
+\end{array} \right.
+\end{eqnarray}
+
+
+\begin{math}
+w_i^o=1
+\end{math}
+の時は，以下のマッピング関数を用いる．
+
+
+\begin{equation}
+k_{n,m}^{(t)}=1-(t-1)・\Delta k
+\end{equation}
+
+
+\begin{eqnarray}
+\Delta k=\left\{ \begin{array}{ll}
+0.001 & (\tilde{\rho}_{n,m} \in [0,0.6]) \\
+0.0015 & (\tilde{\rho}_{n,m} \in [0.6,0.8]) \\
+0.002 & (\tilde{\rho}_{n,m} \in [0.8,1]) \\
+\end{array} \right.
+\end{eqnarray}
+
+\begin{math}
+\tilde{\rho}_{n,m}'
+\end{math}は，変更後の正規化された距離値を表し，
+\begin{math}
+k_{n,m}^{(t)}
+\end{math}は，\begin{math}n\end{math}番目のビンの\begin{math}m\end{math}番目のマッピングパラメータである．これを\begin{math}t\end{math}回繰り返せば各ビンの加重平均値は必ず透かし埋め込み条件式(3.15)を満たすので，初めて満たした時に透かしデータを埋め込むことにする．\begin{math}t\end{math}は，１回目から始まるものとする．つまり，\begin{math}k_{n,m}^{(1)}=1\end{math}から始まるものとする．
+
+
+以下に透かし埋め込み条件を示す．
+\begin{equation}
+\left\{
+\begin{array}{ll}
+\bar{\rho}_i <0.5-\alpha\ (w_i^o=0)\\
+\bar{\rho}_i >0.5+\alpha\ (w_i^o=1)
+
+    \end{array}
+\right.
+(1 \le i \le N)
+\end{equation}
+\begin{math}
+\bar{\rho}_i
+\end{math}
+は，\begin{math}i\end{math}番目のビンの加重平均値を表す．
+\begin{math}
+\alpha
+\end{math}
+は，透かし強度を表し，
+\begin{math}
+\alpha
+\end{math}
+を大きくするにつれ，頑健性は向上するが，各ビンの平均値を大きく動かすことになるので歪みが大きくなる．
+\subsection{逆正規化を行い透かし埋め込み後の頂点を計算}
+
+3.2.6で修正した各ビンの正規化された距離値を逆正規化して，元の値に戻す．以下に逆正規化の公式を示す．
+\begin{equation}
+\grave{\rho}_{n,m}=(\tilde{\rho}_{n,m}')・(\rho_n^{max}-\rho_n^{min})+\rho_n^{min}
+\end{equation}
+
+\begin{math}
+\grave{\rho}_{n,m}
+\end{math}
+は，逆正規化された後の距離値を表す．
+
+そして，最後の手順として逆正規化した距離値並びに，3.2.1で計算しておいた
+\begin{math}
+\theta
+\end{math}
+，
+\begin{math}
+\psi
+\end{math}
+を用いて，球面座標
+\begin{math}
+(\grave{\rho_i},\theta_i,\psi_i)
+\end{math}
+から，透かし埋め込み後のデカルト座標
+\begin{math}
+(x_i',y_i',z_i')
+\end{math}
+を計算する．以下にその公式を示す．
+
+
+\begin{eqnarray}
+\left\{ \begin{array}{ll}
+x_i'=\grave{\rho}_i・\cos\theta_i・\sin\psi_i+x_g \\
+y_i'=\grave{\rho}_i・\sin\theta_i・\sin\psi_i+y_g \\
+z_i'=\grave{\rho}_i・\cos\psi_i+z_g \\
+\end{array} \right.
+\end{eqnarray}
+
+
+以上の，手順を踏むことで透かし埋め込み過程は完了する．
+
+
+
+
+
+
+\newpage
+\section{透かし抽出方法}
+透かし抽出の手順は，透かしを埋め込むときとほとんど同じであり，埋め込むときより容易なアルゴリズムである．埋め込むときと異なるのは，各ビンにおいて正規化された距離値の加重平均を計算した後，マッピング関数を用いて各ビンの加重平均を変更して透かしを埋め込む過程が，透かし抽出条件により0，1を判別する過程に変更しているだけなので，その手順だけをここでは説明する．
+
+
+
+\subsection{透かし抽出条件により0,1を判別}
+各ビンにおいて正規化された距離値の加重平均値を計算し，式(3.18)を用いて\begin{math}N\end{math}ビットの透かしデータを抽出する．
+\begin{equation}
+w_i^d=
+\left\{
+\begin{array}{ll}
+0\ (\bar{\rho}_i^d \le 0.5)\\
+1\ (\bar{\rho}_i^d > 0.5)
+
+    \end{array}
+\right.
+(1 \le i \le N)
+\end{equation}
+
+\begin{math}
+w_i^d
+\end{math}
+は，\begin{math}i\end{math}番目のビンに埋め込まれた透かし情報を示し，
+\begin{math}
+\bar{\rho}_i^d
+\end{math}
+は，\begin{math}i\end{math}番目のビンの加重平均値を示す．抽出された透かしデータは以下のように表せられる．
+
+\begin{equation}
+  W^d = (w^d_1,w^d_2,w^d_3...,.,w^d_{N-2},w^d_{N-1},w^d_N) \label{exp:sample}
+\end{equation}
+
+
+
+
+
+
+
+\chapter{実験}
+ここでは，提案した加重平均を用いて三次元画像に透かしを埋め込んだ後の歪み，並びに頑健性をChoの方法の改善版である，Liの方法と比較することにする．実験で用いる三次元画像を図\ref{fig:bunny}に示す．このStanford\ Bunnyと呼ばれるモデルは，頂点数34835個，面数69666個のモデルである．このモデルは，様々な三次元画像データに対するアルゴリズムをテストするために使用されるモデルの代表的なものであり，このモデルによってベンチマークされたアルゴリズムはより実用的な問題にも対応できる．\par
+実験では，各ビンの最初と最後の5\%の距離値に重み7を，その他の距離値には重み1を加えて加重平均を計算し，透かし強度
+\begin{math}
+\alpha=0.1
+\end{math}
+として実験を行った．
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[scale=1.3]{figure/bunny.eps}% 図を貼り込む
+    % 試しに，tiger.psが自分のマシンのどこに格納されているかを調べて
+    % 以下の命令を有効にしてみて下さい．
+    % ただし，同時に\begin{document}より前にある\usepackage{graphicx}
+    % も有効にする必要があります．
+    % 以下の例ではついでに四角で囲っています．
+    %\framebox{\includegraphics[width=5cm,clip]{/usr/local/share/ghostscript/7.07/examples/tiger.ps}}
+  \end{center}
+  \caption{透かし埋め込み前のStanford\ Bunny}
+  \label{fig:bunny}
+\end{figure}
+
+
+
+\newpage
+
+
+
+
+
+
+\section{歪みの比較}
+ここでは，透かしを埋め込んだ時の三次元画像の歪みを客観的視覚からの評価で行う．図\ref{fig:Li_bunny}にLiの方法で透かしを埋め込んだStanford\ Bunnyを示す．そして，図\ref{fig:me}に提案法で透かしを埋め込んだStanford\ Bunnyを示す．
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[scale=1.3]{figure/cho2.eps}% 図を貼り込む
+    % 試しに，tiger.psが自分のマシンのどこに格納されているかを調べて
+    % 以下の命令を有効にしてみて下さい．
+    % ただし，同時に\begin{document}より前にある\usepackage{graphicx}
+    % も有効にする必要があります．
+    % 以下の例ではついでに四角で囲っています．
+    %\framebox{\includegraphics[width=5cm,clip]{/usr/local/share/ghostscript/7.07/examples/tiger.ps}}
+  \end{center}
+  \caption{Liの方法で透かしを埋め込んだStanford\ Bunny}
+  \label{fig:Li_bunny}
+\end{figure}
+
+\newpage
+
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[scale=1.3]{figure/pro.eps}% 図を貼り込む
+    % 試しに，tiger.psが自分のマシンのどこに格納されているかを調べて
+    % 以下の命令を有効にしてみて下さい．
+    % ただし，同時に\begin{document}より前にある\usepackage{graphicx}
+    % も有効にする必要があります．
+    % 以下の例ではついでに四角で囲っています．
+    %\framebox{\includegraphics[width=5cm,clip]{/usr/local/share/ghostscript/7.07/examples/tiger.ps}}
+  \end{center}
+  \caption{提案法で透かしを埋め込んだStanford\ Bunny}
+  \label{fig:me}
+\end{figure}
+
+
+
+
+図\ref{fig:Li_bunny}と図\ref{fig:me}を比較した時に，図\ref{fig:me}の左耳に歪みが出ていることがわかる．これは，Liの方法が左耳の頂点を透かしを埋め込むために使用していないのに対して，提案手法は全頂点を用いているからである．これまでに説明した通り，こういった歪みを最小限に抑えるために，本論文では加重平均を用いている．その代わりに，提案手法では体全体の歪みがLiの方法よりも低減されていることがわかる．
+特に顕著に歪みに違いがでている部分は，Stanford\ Bunnyの鼻のあたりと背中である．図\ref{fig:Li_bunny}の右鼻にでている歪みは目に見てわかるが，図\ref{fig:me}ではほとんど目には見えない．また，図\ref{fig:Li_bunny}の背中にでている横線の歪みの数が図\ref{fig:me}では減少しているのが目で見てわかる．
+
+
+
+
+
+
+
+\newpage
+
+\section{頑健性の比較}
+本論文では，LIRIS研究室によって提供されているソフトウェア\cite{benchmark}を用いて様々な強度で図\ref{fig:Li_bunny}と図\ref{fig:me}に，ノイズ攻撃，平滑化攻撃，量子化攻撃をした．それぞれの攻撃されたモデルを図4.4～図4.9に示す．これらの攻撃されたモデルから元の透かしデータがどれだけ正しく抽出できるかを相関値を用いて評価する．相関値の範囲は，[-1,1]であり，より1に近ければ抽出された透かしデータが元の透かしデータとより変化がないことを示す．\par
+
+\begin{equation}
+相関値=\frac{\sum_{i=1}^N (w_i^d-\bar{w^d})・\sum_{i=1}^N (w_i^o-\bar{w^o})}{\sqrt{\sum_{i=1}^N (w_i^d-\bar{w^d})^2・\sum_{i=1}^N (w_i^o-\bar{w^o})^2}}
+\end{equation}
+
+
+\begin{math}
+\bar{w^d}
+\end{math}
+は，抽出された透かしの算術平均値であり，
+\begin{math}
+w_i^d
+\end{math}
+は，抽出された透かしの\begin{math}i\end{math}番目の透かしを表す．
+同様に，
+\begin{math}
+\bar{w^o}
+\end{math}
+は，元の透かしの算術平均値であり，
+\begin{math}
+w_i^d
+\end{math}
+は，元の透かしの\begin{math}i\end{math}番目の透かしを表す．\par
+
+表4.1～表4.4にLiの方法と提案法の頑健性の比較結果を示す．
+
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.5\hsize}
+        \begin{center}
+          \caption{攻撃なし}
+          \begin{tabular}{l|l|l}
+          \hline
+    攻撃なし & Liの方法 & 提案法\\ \hline \hline
+                                \quad  & 1.0 & 1.0 \\ \hline
+         
+          \end{tabular}
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.5\hsize}
+        \begin{center}
+          \caption{ノイズ攻撃後}
+          \begin{tabular}{c|c|c}
+            \hline
+            ノイズ強度(\%) & Liの方法 & 提案法 \\ \hline \hline
+            0.1 & 1.0 & 1.0 \\
+            0.3 & 0.9055 & 0.9355 \\
+            0.5 & 0.6608 & 0.7259 \\ \hline
+          \end{tabular}
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+  \end{center}
+\end{table}
+
+
+
+\begin{table}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.5\hsize}
+        \begin{center}
+          \caption{平滑化攻撃後}
+          \begin{tabular}{c|c|c}
+          \hline
+    繰り返し回数(回) & Liの方法 & 提案法\\ \hline \hline
+10 & 0.9005 & 0.9663 \\
+                                30  & 0.4711 & 0.4885 \\ 
+         50  & 0.1761 & 0.3120 \\ \hline
+          \end{tabular}
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.5\hsize}
+        \begin{center}
+          \caption{量子化攻撃後}
+          \begin{tabular}{c|c|c}
+            \hline
+            強度(bits) & Liの方法 & 提案法 \\ \hline \hline
+            9 & 0.9669 & 1.0 \\
+            8 & 0.7259 & 0.8108 \\
+            7 & 0.2995 & 0.4470 \\ \hline
+          \end{tabular}
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+  \end{center}
+\end{table}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_noise1.eps}
+          \hspace{1.6cm} ノイズ強度(\%)=0.1
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_noise2.eps}
+          \hspace{1.6cm} ノイズ強度(\%)=0.3
+        \end{center}
+      \end{minipage}
+
+      % 3
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_noise3.eps}
+          \hspace{1.6cm} ノイズ強度(\%)=0.5
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+    \caption{ノイズ攻撃された後のうさぎ(Liの方法)}
+    \label{fig:noise1}
+  \end{center}
+\end{figure}
+
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_noise1.eps}
+          \hspace{1.6cm} ノイズ強度(\%)=0.1
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_noise2.eps}
+          \hspace{1.6cm} ノイズ強度(\%)=0.3
+        \end{center}
+      \end{minipage}
+
+      % 3
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_noise3.eps}
+          \hspace{1.6cm} ノイズ強度(\%)=0.5
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+    \caption{ノイズ攻撃された後のうさぎ(提案法)}
+    \label{fig:noise2}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_smoothing1.eps}
+          \hspace{1.6cm} 繰り返し回数(回）=10
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_smoothing2.eps}
+          \hspace{1.6cm} 繰り返し回数(回）=30
+        \end{center}
+      \end{minipage}
+
+      % 3
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_smoothing3.eps}
+          \hspace{1.6cm} 繰り返し回数(回）=50
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+    \caption{平滑化攻撃された後のうさぎ(Liの方法)}
+    \label{fig:smoothing1}
+  \end{center}
+\end{figure}
+
+\begin{figure}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_smoothing1.eps}
+          \hspace{1.6cm} 繰り返し回数(回）=10
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_smoothing2.eps}
+          \hspace{1.6cm} 繰り返し回数(回）=30
+        \end{center}
+      \end{minipage}
+
+      % 3
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_smoothing3.eps}
+          \hspace{1.6cm} 繰り返し回数(回）=50
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+    \caption{平滑化攻撃された後のうさぎ(提案法)}
+    \label{fig:smoothing1}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_quan1.eps}
+          \hspace{1.6cm} 強度(bits)=9
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_quan2.eps}
+          \hspace{1.6cm} 強度(bits)=8
+        \end{center}
+      \end{minipage}
+
+      % 3
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/Li_quan3.eps}
+          \hspace{1.6cm} 強度(bits)=7
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+    \caption{量子化攻撃された後のうさぎ(Liの方法)}
+    \label{fig:quan1}
+  \end{center}
+\end{figure}
+
+
+
+\begin{figure}[htbp]
+  \begin{center}
+    \begin{tabular}{c}
+
+      % 1
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_quan1.eps}
+          \hspace{1.6cm} 強度(bits)=9
+        \end{center}
+      \end{minipage}
+
+      % 2
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_quan2.eps}
+          \hspace{1.6cm} 強度(bits)=8
+        \end{center}
+      \end{minipage}
+
+      % 3
+      \begin{minipage}{0.33\hsize}
+        \begin{center}
+          \includegraphics[clip, width=4.5cm]{figure/my_quan3.eps}
+          \hspace{1.6cm} 強度(bits)=7
+        \end{center}
+      \end{minipage}
+
+    \end{tabular}
+    \caption{量子化攻撃された後のうさぎ(提案法)}
+    \label{fig:quan1}
+  \end{center}
+\end{figure}
+
+\newpage
+表4.1～表4.4を見ると，提案法の方が全ての攻撃に対して頑健性が高いことがわかる．これは，すでに述べた通りLiの手法よりも各ビンの頂点数が多いためである．何度も言うが，本論文の目的は如何にしてこの頑健性の高さを保ちつつ歪みを低減できるかというところに重点をおいている．
+
+
+\chapter{むすび}
+本論文では，加重平均を用いた三次元画像電子透かし法を提案した．この提案法は，Liの方法でヒストグラムの両端5\%を切り取るメリットを頂点数を減少させることなく疑似的に実現することが目的であった．実験結果からわかる通り，提案法は全頂点を用いるので，Liの方法では歪みが出ていなかった部分に歪みが出てしまっているが，加重平均を用いることによってその部分の歪みを最小限に抑えることができた．その代わりに，提案法は体全体の歪みを低減させることができた．また，Liの方法よりも頂点数を多く使うので頑健性は当然ながら大きく向上した．\par
+今後の課題としては，重みづけをさらに上手く調整することで，さらに歪みの低減ができることが期待される．
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+ %謝辞
+%%
+
+ \begin{acknowledgements}
+ 本研究を行うにあたり，直接御指導，御助言頂いた宇戸寿幸准教授に深く感謝の意を表します．\par
+そして，卒業論文の副査を担当して頂いた，柳原圭雄教授，樋上善信教授，並びに本研究において御支援，ご鞭撻頂いた新谷公平技術職員に深く感謝の意を表します．\par
+最後に，日頃多岐にわたりアドバイスを頂いた博士課程の谷口功樹氏，松尾友氏，小沼千穂氏，柏田直樹氏，渡邊良多氏，及び岡崎寛樹，長谷川和希，北村優真，西原友朗，及び情報工学講座の諸君に厚く感謝致します．
+ \end{acknowledgements}
+\thispagestyle{plain}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%% 参考文献
+%%
+
+\begin{thebibliography}{99}
+\bibitem{maegaki1}佐々木良一，吉浦裕,手塚悟,三島久典,”インターネット時代の情報セキュリティ\,暗号と電子透かし”,共立出版株式会社,2000.
+
+\bibitem{maegaki2}井上彰,”電子透かし\,マルチメディア時代の暗号システム”,株式会社丸山学芸図書,1997.
+
+\bibitem{Cho}Jae-Won Cho, 2, Rémy Prost and Ho-Youl Jung,”An Oblivious Watermarking for 3-D Polygonal Meshes
+Using Distribution of Vertex Norms”,IEEE Transactions on Signal Processing,Volume 55 , Issue 1 , January 2007.
+
+\bibitem{Li}Song Li, Rongrong Ni and Yao Zhao,”A 3D Mesh Watermarking Based on Improved
+Vertex Grouping and Piecewise Mapping Function”,Journal of Information Hiding and Multimedia Signal Processing,Volume 8, Number 1, January 2017.
+
+
+\bibitem{benchmark}Kai WANG,Guillaume Lavoue,Florence Denis,Atilla Baskurt,and Xiyan He,”A Benchmark for 3D Mesh Watermarking”,Shape Modeling International Conference IEEE Computer Society,Volume 5,pp.231-235,2010.
+    \end{thebibliography}
+\thispagestyle{plain}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%% 付録
+%%
+% \appendix
+% 
+% \chapter{サンプルプログラム}
+% 
+% プログラムリストや実行結果など，本論を補足する上で必要と思われるものが
+% あれば付録として付ける．
+% 
+% {
+% \footnotesize
+% \begin{verbatim}
+% #include <stdio.h>
+% int main(void)
+% {
+%     printf("Hello, World!\n");
+%     return 0;
+% }
+% \end{verbatim}
+% }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
